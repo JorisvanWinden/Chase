@@ -6,6 +6,12 @@ int ** board;
 int M;
 int N;
 
+typedef struct {
+	int * hor;
+	int * ver;
+	int count;
+} solution_t;
+
 // prints the board to stdout
 void print_board()
 {
@@ -94,22 +100,30 @@ void click(int m, int n)
 }
 
 // sets all lights in this row to off
-void hunt_row(int m)
+// stores all lights clicked in sol, if not NULL
+void hunt_row(int m, solution_t * sol)
 {
 	for(int i = 0; i < N; i++)
 	{
 		if(board[m][i] == 1) {
 			click(m + 1, i);
+			if(sol != NULL)
+			{
+				sol->ver[sol->count] = m + 1;
+				sol->hor[sol->count] = i;
+				sol->count++;
+			}
 		}
 	}
 }
 
 // sets all lights except in the bottom row off
-void hunt_board()
+// stores all lights clicked in sol, unless NULL
+void hunt_board(solution_t * sol)
 {
 	for(int i = 0; i  < M - 1; i++)
 	{
-		hunt_row(i);
+		hunt_row(i, sol);
 	}
 }
 
@@ -118,14 +132,11 @@ receives an int, ranging from 0 to 2^N
 converts the number to a binary sequence, then 'clicks' all on the lights where the index is 1
 example: 2 -> 01 -> the second light of the upper row will be 'clicked'
 
-returns the binary sequence as an array of integers
-
-exspects caller to free memory
+stores binary sequence in bin if not NULL
 */
 
-int* click_series(int n)
+void click_series(int n, int * bin)
 {
-	int * bin = malloc(sizeof(int) * N);
 
 	for(int i = 0; i < N; i++)
 	{
@@ -134,10 +145,12 @@ int* click_series(int n)
 		{
 			click(0, i);
 		}
-		bin[i] = num;
+		if(bin != NULL)
+		{
+			bin[i] = num;
+		}
 	}
 	printf("\n");
-	return bin;
 }
 
 //hunts all possible combinations of the upper row
@@ -150,10 +163,11 @@ void hunt_all()
 		clear_board();
 
 		// the array of 1's and 0's is stored in bin
-		int * bin;
-		bin = click_series(i);
+		int * bin = malloc(sizeof(int) * N);
 
-		hunt_board();
+		click_series(i, bin);
+
+		hunt_board(NULL);
 
 		// prints in this form: 110:101
 		for(int j = 0; j < N; j++)
@@ -198,10 +212,26 @@ void hunt_custom()
 			break;
 		}
 	}
+	solution_t * sol = malloc(sizeof(solution_t));
 
-	hunt_board();
+	sol->hor = malloc(sizeof(int) * N * M);
+	sol->ver = malloc(sizeof(int) * N * M);
+	sol->count = 0;
 
+	hunt_board(sol);
+
+	for(int i = 0; i < sol->count; i++)
+	{
+		printf("Click %d, %d\n", sol->ver[i] + 1, sol->hor[i] + 1);
+	}
+
+	free(sol->hor);
+	free(sol->ver);
+	free(sol);
+
+	printf("Bottom row is: ");
 	print_row(M - 1);
+	printf("\n");
 }
 
 // asks for board with and height, prompts what to do, does it. Cleans up.
