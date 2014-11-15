@@ -2,22 +2,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int ** board;
-int M;
-int N;
-
 typedef struct {
 	int * hor;
 	int * ver;
 	int count;
 } solution_t;
 
+typedef struct {
+	int ** fields;
+	int M;
+	int N;
+} board_t;
+
 // prints the board to stdout
-void print_board()
+void print_board(board_t * board)
 {
-	for(int i = 0; i < M; i++) {
-		for(int j = 0; j < N; j++) {
-			printf("%d ", board[i][j]);
+	for(int i = 0; i < board->M; i++) {
+		for(int j = 0; j < board->N; j++) {
+			printf("%d ", board->fields[i][j]);
 		}
 		printf("\n");
 	}
@@ -25,45 +27,50 @@ void print_board()
 
 // prints one row of the board.
 // assumes valid input
-void print_row(int row)
+void print_row(board_t * board, int row)
 {
-	for(int i = 0; i < N; i++)
+	for(int i = 0; i < board->N; i++)
 	{
-		printf("%d", board[row][i]);
+		printf("%d", board->fields[row][i]);
 	}
 }
 
 // allocates memory for the board and sets it to 0
-void init_board()
+board_t * init_board(int M, int N)
 {
-	board = malloc(sizeof(int*) * M);
+	board_t * board = malloc(sizeof(board_t));
+	board->fields = malloc(sizeof(int*) * M);
+	board->M = M;
+	board->N = N;
 	for(int i = 0; i < M; i++) {
-		board[i] = malloc(sizeof(int) * N);
+		board->fields[i] = malloc(sizeof(int) * N);
 		for(int j = 0; j < N; j++) {
-			board[i][j] = 0;
+			board->fields[i][j] = 0;
 		}
 	}
+	return board;
 }
 
 // resets board
-void clear_board()
+void clear_board(board_t * board)
 {
-	for(int i = 0; i < M; i++)
+	for(int i = 0; i < board->M; i++)
 	{
-		for(int j = 0; j < N; j++)
+		for(int j = 0; j < board->N; j++)
 		{
-			board[i][j] = 0;
+			board->fields[i][j] = 0;
 		}
 	}
 }
 
 // deallocates memory of the board
-void destroy_board()
+void destroy_board(board_t * board)
 {
-	for(int i = 0; i < M; i++)
+	for(int i = 0; i < board->M; i++)
 	{
-		free(board[i]);
+		free(board->fields[i]);
 	}
+	free(board->fields);
 	free(board);
 }
 
@@ -80,33 +87,32 @@ int convert(int src)
 
 // changes board[m][n] to the converted value
 // checks for valid input
-void turn(int m, int n)
+void turn(board_t * board, int m, int n)
 {
-	if(m >= 0 && m < M && n >= 0 && n < N)
+	if(m >= 0 && m < board->M && n >= 0 && n < board->N)
 	{
-		board[m][n] = convert(board[m][n]);
-	} else {
+		board->fields[m][n] = convert(board->fields[m][n]);
 	}
 }
 
 // changes board[m][n] and all of it's non-diagonal neighbours
-void click(int m, int n)
+void click(board_t * board, int m, int n)
 {
-	turn(m, n);
-	turn(m + 1, n);
-	turn(m - 1, n);
-	turn(m, n - 1);
-	turn(m, n + 1);
+	turn(board, m, n);
+	turn(board, m + 1, n);
+	turn(board, m - 1, n);
+	turn(board, m, n - 1);
+	turn(board, m, n + 1);
 }
 
 // sets all lights in this row to off
 // stores all lights clicked in sol, if not NULL
-void hunt_row(int m, solution_t * sol)
+void hunt_row(board_t * board, int m, solution_t * sol)
 {
-	for(int i = 0; i < N; i++)
+	for(int i = 0; i < board->N; i++)
 	{
-		if(board[m][i] == 1) {
-			click(m + 1, i);
+		if(board->fields[m][i] == 1) {
+			click(board, m + 1, i);
 			if(sol != NULL)
 			{
 				sol->ver[sol->count] = m + 1;
@@ -119,11 +125,11 @@ void hunt_row(int m, solution_t * sol)
 
 // sets all lights except in the bottom row off
 // stores all lights clicked in sol, unless NULL
-void hunt_board(solution_t * sol)
+void hunt_board(board_t * board, solution_t * sol)
 {
-	for(int i = 0; i  < M - 1; i++)
+	for(int i = 0; i  < board->M - 1; i++)
 	{
-		hunt_row(i, sol);
+		hunt_row(board, i, sol);
 	}
 }
 
@@ -135,15 +141,15 @@ example: 2 -> 01 -> the second light of the upper row will be 'clicked'
 stores binary sequence in bin if not NULL
 */
 
-void click_series(int n, int * bin)
+void click_series(board_t * board, int n, int * bin)
 {
 
-	for(int i = 0; i < N; i++)
+	for(int i = 0; i < board->N; i++)
 	{
 		int num = (n >> i) & 1;
 		if(num == 1)
 		{
-			click(0, i);
+			click(board, 0, i);
 		}
 		if(bin != NULL)
 		{
@@ -154,20 +160,21 @@ void click_series(int n, int * bin)
 }
 
 //hunts all possible combinations of the upper row
-void hunt_all()
+void hunt_all(int M, int N)
 {
 	int count = pow(2, N);
+	board_t * board = init_board(M, N);
 
 	for(int i = 0; i < count; i++)
 	{
-		clear_board();
+		clear_board(board);
 
 		// the array of 1's and 0's is stored in bin
 		int * bin = malloc(sizeof(int) * N);
 
-		click_series(i, bin);
+		click_series(board, i, bin);
 
-		hunt_board(NULL);
+		hunt_board(board, NULL);
 
 		// prints in this form: 110:101
 		for(int j = 0; j < N; j++)
@@ -175,16 +182,18 @@ void hunt_all()
 			printf("%d", bin[j]);
 		}
 		printf(":");
-		print_row(M - 1);
+		print_row(board, M - 1);
 
 		free(bin);
 	}
 	printf("\n");
+	destroy_board(board);
 }
 
 // lets user enter coordinates of square to be turnt on
-void hunt_custom()
+void hunt_custom(int M, int N)
 {
+	board_t * board = init_board(M, N);
 	while(1)
 	{
 		int hor;
@@ -201,9 +210,9 @@ void hunt_custom()
 		
 		if(hor >= 0 && hor < N && ver >= 0 && ver < M)
 		{
-			turn(ver, hor);
+			turn(board, ver, hor);
 		}
-		print_board();
+		print_board(board);
 		printf("Enter -1 to hunt, or 0 to switch another light: ");
 		int res;
 		scanf("%d", &res);
@@ -218,7 +227,7 @@ void hunt_custom()
 	sol->ver = malloc(sizeof(int) * N * M);
 	sol->count = 0;
 
-	hunt_board(sol);
+	hunt_board(board, sol);
 
 	for(int i = 0; i < sol->count; i++)
 	{
@@ -230,13 +239,16 @@ void hunt_custom()
 	free(sol);
 
 	printf("Bottom row is: ");
-	print_row(M - 1);
+	print_row(board, M - 1);
 	printf("\n");
+
+	destroy_board(board);
 }
 
 // asks for board with and height, prompts what to do, does it. Cleans up.
 int main(int argc, char * argv[])
 {
+	int M, N;
 	printf("Enter board width: ");
 	scanf("%d", &N);
 	printf("Enter board height: ");
@@ -246,16 +258,11 @@ int main(int argc, char * argv[])
 	int res;
 	scanf("%d", &res);
 
-	init_board();
-
 	if(res == 1)
 	{
-		hunt_all();
+		hunt_all(M, N);
 	} else if (res == 2)
 	{
-		hunt_custom();
+		hunt_custom(M, N);
 	}
-
-	
-	destroy_board();
 }
