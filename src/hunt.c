@@ -15,8 +15,8 @@ void hunt_row(board_t * board, int m, solution_t * sol)
 			click(board, m + 1, i);
 			if(sol != NULL)
 			{
-				sol->ver[sol->count] = m + 1;
-				sol->hor[sol->count] = i;
+				sol->ver[sol->count] = m + 2;
+				sol->hor[sol->count] = i + 1;
 				sol->count++;
 			}
 		}
@@ -32,7 +32,6 @@ void hunt_board(board_t * board, solution_t * sol)
 		hunt_row(board, i, sol);
 	}
 }
-
 
 //hunts all possible combinations of the upper row
 void hunt_all(int M, int N)
@@ -61,7 +60,6 @@ void hunt_all(int M, int N)
 
 		free(bin);
 	}
-	printf("\n");
 	destroy_board(board);
 }
 
@@ -106,7 +104,7 @@ void hunt_custom(int M, int N)
 
 	for(int i = 0; i < sol->count; i++)
 	{
-		printf("Click %d, %d\n", sol->ver[i] + 1, sol->hor[i] + 1);
+		printf("Click %d, %d\n", sol->ver[i], sol->hor[i]);
 	}
 
 	free(sol->hor);
@@ -115,7 +113,6 @@ void hunt_custom(int M, int N)
 
 	printf("Bottom row is: ");
 	print_row(board, M - 1);
-	printf("\n");
 
 	destroy_board(board);
 }

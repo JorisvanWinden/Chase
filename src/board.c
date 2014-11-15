@@ -6,10 +6,7 @@
 void print_board(board_t * board)
 {
 	for(int i = 0; i < board->M; i++) {
-		for(int j = 0; j < board->N; j++) {
-			printf("%d ", board->fields[i][j]);
-		}
-		printf("\n");
+		print_row(board, i);
 	}
 }
 
@@ -21,6 +18,7 @@ void print_row(board_t * board, int row)
 	{
 		printf("%d", board->fields[row][i]);
 	}
+	printf("\n");
 }
 
 // allocates memory for the board and sets it to 0
@@ -108,5 +106,4 @@ void click_series(board_t * board, int n, int * bin)
 			bin[i] = num;
 		}
 	}
-	printf("\n");
 }
