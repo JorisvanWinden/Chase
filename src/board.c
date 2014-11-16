@@ -1,4 +1,5 @@
 #include "board.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,6 +9,20 @@ void print_board(board_t * board)
 	for(int i = 0; i < board->M; i++) {
 		print_row(board, i);
 	}
+}
+
+// serializs the row into an integer, where set bits represent lights which are on, and unset bits represent lights which are off
+int serialize_row(board_t * board, int row)
+{
+	int result;
+	for(int i = 0; i < board->N; i++)
+	{
+		if(board->fields[row][i] == 1)
+		{
+			result += pow(2, i);
+		}
+	}
+	return result;
 }
 
 // prints one row of the board.
@@ -91,19 +106,23 @@ void click(board_t * board, int m, int n)
 	turn(board, m, n + 1);
 }
 
-void click_series(board_t * board, int n, int * bin)
+/*
+click all the lights on the upper row of the board which are set in n, where n is serialized
+stores all lights clicked in solution
+*/
+void click_series(board_t * board, solution_t * solution, int n)
 {
 
 	for(int i = 0; i < board->N; i++)
 	{
-		int num = (n >> i) & 1;
-		if(num == 1)
+		int light  = (n >> i) & 1;
+		if(light == 1)
 		{
 			click(board, 0, i);
-		}
-		if(bin != NULL)
-		{
-			bin[i] = num;
+			if(solution != NULL)
+			{
+				turn(solution, 0, i);
+			}
 		}
 	}
 }

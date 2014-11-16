@@ -5,10 +5,13 @@ typedef struct {
 	int N;
 	int M;
 	int ** fields;
-} board_t;
+} board_t, solution_t;
 
 // prints the board to stdout
 void print_board(board_t * board);
+
+// serializs the row into an integer, where set bits represent lights which are on, and unset bits represent lights which are off
+int serialize_row(board_t * board, int row);
 
 // prints one row of the board.
 // assumes valid input
@@ -33,6 +36,10 @@ void turn(board_t * board, int m, int n);
 // changes board[m][n] and all of it's non-diagonal neighbours
 void click(board_t * board, int m, int n);
 
-void click_series(board_t * board, int n, int * bin);
+/*
+clicks all the lights on the upper row of the board which are set in n, where n is serialized.
+stores all lights clicked in solution
+*/
+void click_series(board_t * board, solution_t * solution, int n);
 
 #endif
