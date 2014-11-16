@@ -3,7 +3,7 @@ Hunt
 
 Solve a lights out puzzle using the hunging technique.
 
-This can solve the game lights out quickly for you, but now with boards with a height of 1.
+This can solve the game lights out quickly for you, but not with boards with a height of 1.
 
 Please excuse my coding style, I made this for fun, and I'm not really experienced. This code has no memory bugs.
 

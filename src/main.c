@@ -15,15 +15,23 @@ board_t * create_custom_board()
 	scanf("%d", &M);
 
 	board_t * board = create_board(M, N);
-	while(1)
-	{
-		int hor;
-		int ver;
 
-		printf("Enter vertical coordinate of light switch on: ");
+	do {
+		printf("Turn on a light? (y/n) ");
+		char res;
+		scanf(" %c", &res);
+
+		if(res == 'n' || res == 'N')
+		{
+			break;
+		}
+
+		int hor, ver;
+
+		printf("Enter vertical coordinate: ");
 		scanf("%d", &ver);
 
-		printf("Enter horizontal coordinate of light to switch on: ");
+		printf("Enter horizontal coordinate: ");
 		scanf("%d", &hor);
 
 		hor--;
@@ -34,15 +42,8 @@ board_t * create_custom_board()
 			turn(board, ver, hor);
 		}
 		print_board(board);
+	} while (1);
 
-		printf("Turn another light? (y/n) ");
-		char res;
-		scanf(" %c", &res);
-		if(res == 'n' || res == 'N')
-		{
-			break;
-		}
-	}
 	return board;
 }
 
