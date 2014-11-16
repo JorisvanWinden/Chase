@@ -14,7 +14,7 @@ void print_board(board_t * board)
 // serializs the row into an integer, where set bits represent lights which are on, and unset bits represent lights which are off
 int serialize_row(board_t * board, int row)
 {
-	int result;
+	int result = 0;
 	for(int i = 0; i < board->N; i++)
 	{
 		if(board->fields[row][i] == 1)
