@@ -5,4 +5,4 @@ SOURCES=$(wildcard src/**/*.c src/*.c)
 OBJECTS=$(patsubst src/%.c,src/%.o,$(SOURCES))
 
 all: $(OBJECTS)
-	$(CC) $(LDFLAGS) $(CFLAGS) -o hunt $(OBJECTS)
+	$(CC) $(LDFLAGS) $(CFLAGS) -o chase $(OBJECTS)

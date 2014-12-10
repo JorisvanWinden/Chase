@@ -2,11 +2,11 @@
 #include <math.h>
 #include "solve.h"
 #include "board.h"
-#include "hunt.h"
+#include "chase.h"
 
 /*
-Try to find a hunt with the same result as serialized_result,
-store the entire hunt in solution.
+Try to find a chase with the same result as serialized_result,
+store the entire chase in solution.
 Assumes solution is not NULL
 Returns 0 if succes, -1 if failure.
 */
@@ -23,7 +23,7 @@ int find_solution(solution_t * solution, int serialized_result, int M, int N)
 		clear_board(temp);
 
 		click_series(board, temp, i);
-		hunt_board(board, temp);
+		chase_board(board, temp);
 
 		int result = serialize_row(board, board->M - 1);
 		if(result == serialized_result)
@@ -57,9 +57,9 @@ assumes sol is not NULL
 */
 void solve(board_t * board, solution_t * sol)
 {
-	hunt_board(board, sol);
+	chase_board(board, sol);
 
-	// bottom row is the serialized result of the first hunt
+	// bottom row is the serialized result of the first chase
 	int bottom_row_result = serialize_row(board, board->M - 1);
 
 	int status = find_solution(sol, bottom_row_result, board->M, board->N);

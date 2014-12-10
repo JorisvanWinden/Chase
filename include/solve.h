@@ -4,8 +4,8 @@
 #include "board.h"
 
 /*
-Try to find a hunt with the same result as serialized_result,
-store the entire hunt in solution.
+Try to find a chase with the same result as serialized_result,
+store the entire chase in solution.
 Assumes solution is not NULL
 Returns 0 if succes, -1 if failure.
 */

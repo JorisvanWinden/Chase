@@ -1,7 +1,7 @@
-Hunt
+Chase
 ====
 
-Solve a lights out puzzle using the hunging technique.
+Solve a lights out puzzle using the chase technique.
 
 This can solve the game lights out quickly for you, but not with boards with a height of 1.
 
@@ -9,8 +9,8 @@ Please excuse my coding style, I made this for fun, and I'm not really experienc
 
 I am aware of the fact that c is not really appropriate in this situation, but whatever.
 
-Hunt will first ask you for width and height of the board.
+Chase will first ask you for width and height of the board.
 Then you can switch individual lights on the board on or off.
 Next, it will solve your board for you, or print an empty board if no solution has been found.
 
-To build, just run Make.
+To build, run Make.
