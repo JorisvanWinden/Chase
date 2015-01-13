@@ -6,3 +6,8 @@ OBJECTS=$(patsubst src/%.c,src/%.o,$(SOURCES))
 
 all: $(OBJECTS)
 	$(CC) $(LDFLAGS) $(CFLAGS) -o chase $(OBJECTS)
+
+.PHONY:
+clean:
+	rm $(OBJECTS)
+	rm chase
